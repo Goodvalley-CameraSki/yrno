@@ -11,8 +11,8 @@
  * @author       Conrad Helgeland
  * @contributor  yr.no (XHTML and CSS)
  * @license       
- * @id           $id:$
- * @link         
+ * @id           $Id$
+ * @link         $URL$
  *
  */
 
