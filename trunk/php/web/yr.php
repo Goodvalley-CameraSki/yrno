@@ -1,16 +1,16 @@
 <?php
 /**
  * yr.php renders a yr.no XML forecast in XHTML
- * 
+ *
  * The script is designed to run standalone, and does not require any configuration,
  * although you may set the default forecast URI and a few other options.
- * 
+ *
  * If you edit this file:
  * Remember to save with UTF-8 encoding to avoid trouble if you set an $uri with æøå or other non-ASCII characters
  *
  * @author       Conrad Helgeland
  * @contributor  yr.no (XHTML and CSS)
- * @license       
+ * @license
  * @id           $Id$
  * @link         $URL$
  *
@@ -45,7 +45,9 @@ if (file_exists($config["config"])) {
  * GET (request) parameters
  */
 $uri = (empty($_GET["uri"]) === false) ? $_GET["uri"] :  $config["uri"] ;    // service URI (for varsel.xml)
-$q = (empty($_GET["q"]) === false) ? $_GET["q"] : null ;                     // location ("Stadnamn") query 
+$q = (empty($_GET["q"]) === false) ? $_GET["q"] : null ;                     // location ("Stadnamn") query
+
+
 
 /**
  * PHP runtime settings
@@ -59,29 +61,39 @@ libxml_use_internal_errors(true);
  */
 
 try {
-    
-    if (strpos($uri, "http://www.yr.no") === false || strpos($uri, ".xml") === false) {
-        throw new RuntimeException("Forecast URI '$uri' is invalid");
+    // Encode and validate URI
+    $u = (object) parse_url($uri);
+    $np = "";
+    foreach (explode("/", $u->path) as $path) {
+        if ($path != "") {
+            $np .= (ctype_print($path)) ? "/$path" : "/".urlencode($path) ;
+        }
+    }
+    $u->path = $np;
+    // Validate
+    if ($uri != (strip_tags($uri)) || isset($u->host) === false || strpos($u->host, "yr.no") === false || isset($u->path) === false || strpos($u->path, ".xml") === false) {
+        throw new RuntimeException("Forecast URI '".htmlspecialchars($uri)."' is invalid");
+    }
+    $uri = "$u->scheme://$u->host$u->path";
 
-    }    
     // Create temporary file
     $tmpfile = tempnam(md5(uniqid(rand(), true)), '__yr.no__');
- 
+
     // Find cache directory
-    $tmpdir = (file_exists($config["tmp"]) && is_writeable($config["tmp"])) ? $config["tmp"] : dirname($tmpfile);  
-    
+    $tmpdir = (file_exists($config["tmp"]) && is_writeable($config["tmp"])) ? $config["tmp"] : dirname($tmpfile);
+
     // Create cache filename from md5 of $uri
-    $cachefile = (file_exists($tmpdir) && is_writeable($tmpdir)) ? $tmpdir . "/yr.no_".md5($uri) : false;  
+    $cachefile = (file_exists($tmpdir) && is_writeable($tmpdir)) ? $tmpdir . "/yr.no_".md5($uri) : false;
 
     if (file_exists($cachefile) === false || filemtime($cachefile) < (time() - $config["timeout"])) {
-        
+
         // Make sure the URI exists and is reachable
         $stream = fopen($uri, "r");
         if ($stream === false) {
             throw new UnexpectedValueException("No network, failed reaching URI '$uri'");
         }
         $stream_metadata = stream_get_meta_data($stream);
-        
+
         $text_xml = false;
         foreach ($stream_metadata["wrapper_data"] as $header) {
             if (strpos(strtolower($header), "content-type: text/xml") === 0) {
@@ -91,22 +103,22 @@ try {
         /**
          * fopen fails opening unencoded URIs with e.g. æøå
          *
-         *
+    */
          if ($text_xml !== true) {
             throw new UnexpectedValueException("URI '<a href=\"$uri\">$uri</a>' failed returning expected media type 'text/xml'");
-        }*/
-        
+        }
+
         // Create SimpleXML object with remote data at URI $uri
         $sx =  new SimpleXMLElement($uri, LIBXML_NOERROR, true);
-        
+
         if (file_exists($tmpfile) && is_writeable($tmpfile)) {
             $md5 = md5($sx->saveXML());
             $sx->addAttribute("md5", $md5);
             $sx->addAttribute("cachetime", date(DATE_ATOM));
             $xml = $sx->saveXML();
-            
+
             file_put_contents($tmpfile, $xml);
-            
+
             rename($tmpfile, $cachefile);
             if (file_exists($tmpfile)) {
                 unlink($tmpfile);
@@ -115,14 +127,14 @@ try {
     } else { // read from cache
         $sx =  new SimpleXMLElement($cachefile, LIBXML_NOERROR, true);
     }
-    
+
     /**
      * Start XML parsing
      */
     date_default_timezone_set( (string) $sx->location->timezone["id"]);
-    
+
     $location = (string) $sx->location->name;
-        
+
     // Create link object for accessing links as $link->id
     $links = $sx->xpath("/weatherdata/links/link[@id]");
     $link = new stdClass;
@@ -130,7 +142,7 @@ try {
         $linkid = (string) $lnk["id"];
         $link->$linkid = (string) $lnk["url"];
     }
-    
+
     /**
      * Start output
      **/
@@ -152,14 +164,14 @@ try {
     <?php
         } // End header
     } ?>
-    
+
   <!-- About/credits -->
   <h2><a href="<?php echo $link->overview .'" target="_top">Værvarsel for '. $location .'';?></a></h2>
   <h3><a href="http://www.yr.no/" target="_top">
     <img src="http://fil.nrk.no/contentfile/web/bgimages/special/weather/jsversion/banner.png" alt="yr.no" title="yr.no er en tjeneste fra Meteorologisk institutt og NRK" /></a>
   </h3>
   <p>Værvarsel fra <a href="http://www.yr.no/" target="_top">yr.no</a>, levert av Meteorologisk institutt og NRK.</p>
-  
+
   <!-- Links -->
   <p class="yr-lenker"><?php echo $location; ?> på yr.no:
     <a href="<?php echo $link->overview; ?>" target="_top">Oversikt</a>
@@ -168,11 +180,11 @@ try {
     <a href="<?php echo $link->weekend; ?>" target="_top">Helg</a>
     <a href="<?php echo $link->longTermForecast; ?>" target="_top">Langtidsvarsel</a>
   </p>
-    
+
     <?php
     // Get all text forecasts
     $texts = $sx->xpath("/weatherdata/forecast/text/location/time");
-    
+
     if ($texts !== false && count($texts) > 0) {
         echo "<!--Text forecast --><h4>Meteorologens varsel for {$sx->forecast->text->location["name"]}</h4>";
         foreach($texts as $text) {
@@ -199,13 +211,13 @@ try {
         $from_hour = date("H", $from_unix);
         $to_hour   = date("H", $to_unix);
         $to_hour   = ($to_hour === "00") ? "24" : $to_hour;
-        
+
         // Conditions text and image (for corresponding symbol)
         $symbol = $forecast->symbol["number"];
         $sky    = $forecast->symbol["name"];
         $file = str_pad($symbol, 2, "0", STR_PAD_LEFT);
         if ((int) $symbol <= 8 && $symbol != 4) {
-            $file .= ( ($from_hour >= 00 || $from_hour == 24) && ($from_hour <= 6 && $to_hour <= 6) ) ? "n" : "d"; 
+            $file .= ( ($from_hour >= 00 || $from_hour == 24) && ($from_hour <= 6 && $to_hour <= 6) ) ? "n" : "d";
         }
         $file .= ".png";
 ?>
@@ -216,7 +228,7 @@ try {
         <td><?php echo $forecast->precipitation["value"];?> mm </td>
         <td class="<?php echo ($forecast->temperature["value"] <= 0) ? "minus" : "pluss"; ?>"><?php echo $forecast->temperature["value"]; ?> &deg;</td>
         <td class="v"><?php echo $forecast->windSpeed["name"] ." ". $forecast->windSpeed["mps"] ." m/s fra ". $forecast->windDirection["name"]; ?></td>
-        <td><?php echo (int) $forecast->pressure["value"]; ?> hPa</td>       
+        <td><?php echo (int) $forecast->pressure["value"]; ?> hPa</td>
       </tr>
 <?php
     /** Mark change of date with a horizontal line */
@@ -252,9 +264,9 @@ try {
  * Error handling
  */
 } catch (Exception $e) {
-    
+
     echo "<h1>Teknisk feil</h1>";
-    echo "<p><strong>". get_class($e) ."</strong>: ".$e->getMessage() ."</p>";    
+    echo "<p><strong>". get_class($e) ."</strong>: ".$e->getMessage() ."</p>";
 
     $libxmlerrors = libxml_get_errors();
     echo "<pre>";
