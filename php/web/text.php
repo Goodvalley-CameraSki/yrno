@@ -4,15 +4,15 @@
  *
  * @author       Conrad Helgeland
  * @contributor  yr.no (XHTML and CSS)
- * @license       
+ * @license
  * @id
- * @link         
+ * @link
  *
  */
 
 /**
  * URI for forecast.xml / varsel.xml
- * 
+ *
  * Change the HTTP URI below to your desired forecast location
  */
 $uri = "http://www.yr.no/sted/Norge/Troms/Tromsø/Tromsø/varsel.xml";
@@ -27,14 +27,14 @@ try {
 
     }
     libxml_use_internal_errors(true);
-
+    var_dump($uri);
     $sx =  new SimpleXMLElement($uri, LIBXML_NOERROR, true);
-    
+
     date_default_timezone_set( (string) $sx->location->timezone["id"]);
 
     // Get all text forecasts
     $texts = $sx->xpath("/weatherdata/forecast/text/location/time");
-    
+
     if ($texts === false || count($texts) === 0) {
         throw new RuntimeException("Found no text forecast for ".$sx->location->name);
     }
@@ -61,7 +61,7 @@ try {
         $from = date("d.m", strtotime($text["from"])); // "25.05"
         $to   = date("d.m", strtotime($text["to"]));   // "01.06"
         $year = date("Y", strtotime($text["to"]));     // "2008"
-        
+
         $from_time = date("H", strtotime($text["from"])); // "00"
         $to_time = date("H", strtotime($text["to"]));     // "14"
         $fromto = ($from != $to) ? "$from kl. $from_time tom. $to.$year kl. $to_time" : "for $from til $to_time" ;
@@ -77,7 +77,7 @@ try {
         echo "<p><strong>{$text->title}</strong>: {$text->body}<br/>(Gjelder fra $fromto.)</p>";
         echo "<!-- from ". $text["from"] ." to ". $text["to"] ."-->";
     }
-    
+
     ?>
   <p>Værvarsel fra <a href="http://www.yr.no/" target="_top">yr.no</a> er levert av Meteorologisk institutt og NRK.</p>
 </div>
@@ -88,9 +88,9 @@ try {
      * Error handling
     */
 } catch (Exception $e) {
-    
+
     echo "<h1>Teknisk feil</h1>";
-    echo "<p><strong>". get_class($e) ."</strong>: ".$e->getMessage() ."</p>";    
+    echo "<p><strong>". get_class($e) ."</strong>: ".$e->getMessage() ."</p>";
 
     $libxmlerrors = libxml_get_errors();
     echo "<pre>";
