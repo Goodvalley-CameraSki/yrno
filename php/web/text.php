@@ -22,12 +22,23 @@ $uri = "http://www.yr.no/sted/Norge/Troms/Tromsø/Tromsø/varsel.xml";
 $uri = (empty($_GET["uri"]) === false) ? $_GET["uri"] :  $uri ;
 
 try {
-    if (strpos($uri, "http://www.yr.no") === false || strpos($uri, ".xml") === false) {
-        throw new RuntimeException("Forecast URI '$uri' is invalid");
-
+    // Encode and validate URI
+    $u = (object) parse_url($uri);
+    $np = "";
+    foreach (explode("/", $u->path) as $path) {
+        if ($path != "") {
+            $np .= (ctype_print($path)) ? "/$path" : "/".urlencode($path) ;
+        }
     }
+    $u->path = $np;
+    // Validate
+    if ($uri != (strip_tags($uri)) || isset($u->host) === false || strpos($u->host, "yr.no") === false || isset($u->path) === false || strpos($u->path, ".xml") === false) {
+        throw new RuntimeException("Forecast URI '".htmlspecialchars($uri)."' is invalid");
+    }
+    $uri = "$u->scheme://$u->host$u->path";
+    
     libxml_use_internal_errors(true);
-    var_dump($uri);
+
     $sx =  new SimpleXMLElement($uri, LIBXML_NOERROR, true);
 
     date_default_timezone_set( (string) $sx->location->timezone["id"]);
