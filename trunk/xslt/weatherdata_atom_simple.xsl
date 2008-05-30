@@ -15,11 +15,12 @@
     <!-- Start of Atom feed -->
     <feed xmlns="http://www.w3.org/2005/Atom">
       <id><xsl:value-of select="$alternate"/></id>
-      
+
       <title xml:lang="nb">Værvarsel fra yr.no</title>
       <title xml:lang="en">Weather forecast from yr.no</title>
       <title xml:lang="nn">Vêrvarsel frå yr.no</title>
-      
+
+      <icon>http://www.nrk.no/contentfile/web/icons/weather/yr.ico</icon>
       <!--<subtitle xml:lang="nb">Gjelder fra <xsl:value-of select="$from"/> til <xsl:value-of select="$to"/></subtitle>
       <subtitle xml:lang="nn">Gjeld frå <xsl:value-of select="/weatherdata/forecast/text/location/time/@from"/> til <xsl:value-of select="/weatherdata/forecast/text/location/time/@from"/></subtitle>
       -->
@@ -29,7 +30,7 @@
 
       <updated><xsl:comment>It would be nice if varsel.xml contained timestamp for when the forecast was generated</xsl:comment>
       </updated>
-      
+
       <link rel="alternate" type="text/html" hreflang="nb" href="{$alternate}"/>
       <link rel="alternate" type="text/html" hreflang="nn" href="{$alternate}"/>
       <link rel="alternate" type="text/html" hreflang="en" href="{$alternate}"/>
@@ -37,7 +38,7 @@
       <link rel="weatherdata" type="text/xml" hreflang="nb" href="{$alternate}"/>
       <link rel="alternate" type="text/html" hreflang="nb" href="{$alternate}"/>
       <link rel="alternate" type="text/html" hreflang="nb" href="{$alternate}"/>
-      
+
       <!--
           <link id="xmlSource" url="http://www.yr.no/sted/Norge/Troms/Tromsø/Tromsø/varsel.xml" />
     <link id="overview" url="http://www.yr.no/sted/Norge/Troms/Tromsø/Tromsø/" />
@@ -45,14 +46,14 @@
     <link id="weekend" url="http://www.yr.no/sted/Norge/Troms/Tromsø/Tromsø/helg.html" />
     <link id="longTermForecast" url="http://www.yr.no/sted/Norge/Troms/Tromsø/Tromsø/langtidsvarsel.html" />
     <link id="radar" url="http://www.yr.no/sted/Norge/Troms/Tromsø/Tromsø/radar.html" />
-    
+
     -->
       <rights xml:lang="nn">Vêrvarsel frå yr.no, levert av Meteorologisk institutt og NRK</rights>
       <rights xml:lang="nb">Værvarsel fra yr.no, levert av Meteorologisk institutt og NRK</rights>
       <rights xml:lang="en">Weather forecast from yr.no, delivered by the Norwegian Meteorological Institute and the NRK</rights>
-      
+
       <generator uri="http://where?/yrphp" version="$id: trunk $">Yr PHP library</generator>
-      
+
       <xsl:apply-templates select="/weatherdata/forecast"/>
     </feed>
   </xsl:template>
@@ -60,7 +61,7 @@
   <xsl:template match="text">
     <xsl:variable name="id" select="/weatherdata/links/link[@id='overview']/@url"/>
 
-    
+
     <entry xmlns="http://www.w3.org/2005/Atom">
       <title xml:lang="nn">Vêrvarsel for <xsl:value-of select="$location"/> på yr.no</title>
       <id><xsl:value-of select="$id"/></id>
@@ -71,7 +72,7 @@
       <tr><th class="v" colspan="3"><strong>Varsel for <xsl:value-of select="$location"/></strong></th></tr>
     </thead>
     <tbody>
-      
+
       <xsl:for-each select="/weatherdata/forecast/tabular/time[@period='2']">
       <tr>
         <xsl:variable name="shortdate" select="concat(substring(@from, 9, 2),'.',substring(@from, 6, 2)) " />

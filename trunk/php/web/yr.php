@@ -22,7 +22,7 @@ $uri = "http://www.yr.no/sted/Norge/Troms/Tromsø/Tromsø/varsel.xml";
 /**
  * Configuration (sensible defaults for Norway)
  */
-$config = array(
+$default = array(
     "uri"             => $uri,              // yr.no http URI for forecast.xml / varsel.xml
     "tmp"             => null,              // cache dir; null => use system temp dir (usually "/tmp")
     "timeout"         => 1800,              // cache time to live (in seconds); 1800 => 30 minutes
@@ -37,8 +37,8 @@ $config = array(
 );
 
 // Load config file (if present)
-if (file_exists($config["config"])) {
-    $config = array_merge(include_once $config["config"]);
+if (file_exists($default["config"])) {
+    $config = array_merge($default, include $default["config"]);
 }
 
 /**
@@ -147,7 +147,7 @@ try {
      * Start output
      **/
     if ($config["naked"] === false) {
-        if (is_file($config["head"])) {
+        if (file_exists($config["head"])) {
             include $config["head"];
         } else {
             // Header
@@ -158,6 +158,8 @@ try {
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
       <title>Værvarsel for <?php echo $location; ?> fra yr.no</title>
       <link href="http://www12.nrk.no/yr.no/yr-php.css" rel="stylesheet" type="text/css" />
+      <link rel="alternate" type="application/atom+xml" title="Atom feed of <?php echo $location?> weather forecast" href="<?php echo "atom.php?uri=".$uri; ?>" />
+    </head>
   </head>
 <body>
 <div id="yr-varsel">
@@ -242,7 +244,7 @@ try {
 
 <?php
     if ($config["naked"] === false) {
-        if (is_file($config["foot"])) {
+        if (file_exists($config["foot"])) {
             include $config["foot"];
         } else {
             // Footer
