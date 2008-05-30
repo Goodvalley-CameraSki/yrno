@@ -16,9 +16,9 @@
     <feed xmlns="http://www.w3.org/2005/Atom">
       <id><xsl:value-of select="$alternate"/></id>
 
-      <title xml:lang="nb">Værvarsel fra yr.no</title>
-      <title xml:lang="en">Weather forecast from yr.no</title>
-      <title xml:lang="nn">Vêrvarsel frå yr.no</title>
+      <title xml:lang="nb"><xsl:value-of select="$location"/> værvarsel fra yr.no</title>
+      <title xml:lang="en"><xsl:value-of select="$location"/> weather forecast from yr.no</title>
+      <title xml:lang="nn"><xsl:value-of select="$location"/> vêrvarsel frå yr.no</title>
 
       <icon>http://www.nrk.no/contentfile/web/icons/weather/yr.ico</icon>
       <!--<subtitle xml:lang="nb">Gjelder fra <xsl:value-of select="$from"/> til <xsl:value-of select="$to"/></subtitle>
@@ -34,10 +34,9 @@
       <link rel="alternate" type="text/html" hreflang="nb" href="{$alternate}"/>
       <link rel="alternate" type="text/html" hreflang="nn" href="{$alternate}"/>
       <link rel="alternate" type="text/html" hreflang="en" href="{$alternate}"/>
+
       <xsl:comment>It would be nice if the hrefs for each hreflang where in the source varsel.xml</xsl:comment>
-      <link rel="weatherdata" type="text/xml" hreflang="nb" href="{$alternate}"/>
-      <link rel="alternate" type="text/html" hreflang="nb" href="{$alternate}"/>
-      <link rel="alternate" type="text/html" hreflang="nb" href="{$alternate}"/>
+
 
       <!--
           <link id="xmlSource" url="http://www.yr.no/sted/Norge/Troms/Tromsø/Tromsø/varsel.xml" />

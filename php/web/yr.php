@@ -158,10 +158,9 @@ try {
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-      <title>Værvarsel for <?php echo $location; ?> fra yr.no</title>
-      <link href="http://www12.nrk.no/yr.no/yr-php.css" rel="stylesheet" type="text/css" />
-      <link rel="alternate" type="application/atom+xml" title="Atom feed of <?php echo $location?> weather forecast" href="<?php echo "atom.php?uri=".$uri; ?>" />
-    </head>
+    <title>Værvarsel for <?php echo $location; ?> fra yr.no</title>
+    <link href="http://www12.nrk.no/yr.no/yr-php.css" rel="stylesheet" type="text/css" />
+    <link rel="alternate" type="application/atom+xml" title="Atom feed of <?php echo $location?> weather forecast" href="<?php echo "atom.php?uri=".$uri; ?>" />
   </head>
 <body>
 <div id="yr-varsel">
