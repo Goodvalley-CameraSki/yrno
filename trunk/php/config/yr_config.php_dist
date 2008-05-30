@@ -3,7 +3,7 @@
  * Configuration file for yr.no applications
  *
  * Save this file as yr_config.php (without _dist suffix)
- * 
+ *
  */
 
 $config = array(
@@ -12,12 +12,20 @@ $config = array(
     "timeout"         => 1800,            // cache time to live (in seconds); 1800 => 30 minutes
     "timezone"        => "Europe/Oslo",
     "naked"           => false,           // false => include header/footer; true => render as a naked <div> (without header/footer)
-    "config"          => __FILE__,
-    "head"            => dirname(__FILE__)."/../web/yr_head.php",
-    "foot"            => dirname(__FILE__)."/../web/yr_foot.php",
-    "img"        => "", 
     "date_format"     => "d.m.Y",
     "error_reporting" => E_ALL | E_STRICT,
 );
+
+$config["config"] = __FILE__;
+//    "head"            => dirname(__FILE__)."/../web/yr_head.php",
+//    "foot"            => dirname(__FILE__)."/../web/yr_foot.php",
+//     "img"        => "",
+$config["root"]    = realpath(dirname(__FILE__) ."/../");
+$config["library"] = $config["root"] . "/library";
+
+// The following adds the library folder to the PHP include path
+ini_set("include_path", $config["library"] . PATH_SEPARATOR . ini_get("include_path"));
+error_reporting($config["error_reporting"]);
+
 // Always return an array
 return $config;
