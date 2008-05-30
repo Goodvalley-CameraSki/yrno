@@ -39,6 +39,8 @@ $default = array(
 // Load config file (if present)
 if (file_exists($default["config"])) {
     $config = array_merge($default, include $default["config"]);
+} else {
+    $config = $default;
 }
 
 /**
