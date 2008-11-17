@@ -5,7 +5,7 @@
 [http://code.google.com/p/yrno/source/browse/trunk/php/library/Yr/Service/Weatherdata.php Yr_Service_Weatherdata] fetches [WeatherdataXML] and makes the data available as PHP object properties.
 
 The Yr PHP library requires [http://php.net PHP] 5.1 or newer, PHP 4 will *not* work.
-
+== Forecasts ==
 *Iterating over future weather*
 {{{
 $yr = new Yr_Service_Weatherdata($iri);
@@ -48,14 +48,14 @@ object(stdClass)[28]
 */
 }}}
 
-
-
+== Text forecast ==
 *Text forecast (mostly Norwegian locations)
 {{{
 foreach($yr->text as $text) {
   echo "<p><strong>{$text->title}</strong>: {$text->body}</p>";
-}
-}}
+}}}
+== Links ==
+
 *Getting link data*
 {{{
 <?php
@@ -68,3 +68,4 @@ foreach($yr->text as $text) {
     <a href="<?php echo $link->longTermForecast; ?>" >Long term</a>
   </p>
 }}}
+== Location data ==
