@@ -1,6 +1,16 @@
-#summary One-sentence summary of this page.
+#summary Getting started
+#labels Featured
 
 = Yr PHP library =
+Yr_Service_Weatherdata fetches [WeatherdataXML] and makes the data available as PHP object properties.
 
-Getting started
+The Yr PHP library requires [http://php.net PHP] 5.1 or newer, PHP 4 will *not* work.
 
+
+Iterating over future weather
+{{{
+$yr = new Yr_Service_Weatherdata($iri);
+foreach ($yr as $forecast) {
+    // $forecast now corresponds to XML in /weatherdata/forecast/tabular/time/*
+}
+}}}
