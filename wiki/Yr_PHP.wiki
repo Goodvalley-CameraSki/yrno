@@ -1,4 +1,4 @@
-#summary Getting started
+#summary Getting started with Yr_Service_Weatherdata
 #labels Featured
 
 = Yr PHP library =
@@ -6,11 +6,29 @@ Yr_Service_Weatherdata fetches [WeatherdataXML] and makes the data available as 
 
 The Yr PHP library requires [http://php.net PHP] 5.1 or newer, PHP 4 will *not* work.
 
-
-Iterating over future weather
+*Iterating over future weather*
 {{{
 $yr = new Yr_Service_Weatherdata($iri);
 foreach ($yr as $forecast) {
     // $forecast now corresponds to XML in /weatherdata/forecast/tabular/time/*
 }
+}}}
+
+*Text forecast (mostly Norwegian locations)
+{{{
+foreach($yr->text as $text) {
+  echo "<p><strong>{$text->title}</strong>: {$text->body}</p>";
+}
+
+*Getting link data*
+{{{
+<?php
+  $link = $yr->link();
+  <p class="yr-lenker">
+    <a href="<?php echo $link->overview; ?>" >Overview</a>
+    <a href="<?php echo $link->hourByHour; ?>" >Hour by hour</a>
+    <?php if (isset($link->radar)) { echo '<a href="'. $link->radar .'" >Radar</a>'; } ?>
+    <a href="<?php echo $link->weekend; ?>" >Weekend</a>
+    <a href="<?php echo $link->longTermForecast; ?>" >Long term</a>
+  </p>
 }}}
