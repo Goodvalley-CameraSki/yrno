@@ -1,0 +1,2 @@
+#summary weatherdata XML format
+= weatherdata =
