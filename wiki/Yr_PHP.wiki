@@ -2,7 +2,7 @@
 #labels Featured
 
 = Yr PHP library =
-Yr_Service_Weatherdata fetches [WeatherdataXML] and makes the data available as PHP object properties.
+[http://code.google.com/p/yrno/source/browse/trunk/php/library/Yr/Service/Weatherdata.php Yr_Service_Weatherdata] fetches [WeatherdataXML] and makes the data available as PHP object properties.
 
 The Yr PHP library requires [http://php.net PHP] 5.1 or newer, PHP 4 will *not* work.
 
